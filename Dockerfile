@@ -32,33 +32,10 @@ COPY nginx.conf /etc/nginx/conf.d/default.conf
 # The 'build' directory from the previous stage contains all the static assets.
 COPY --from=builder /app/build /usr/share/nginx/html
 
-# Expose the port Nginx will listen on. Cloud Run expects applications to listen on PORT 8080.
+# Expose the port Nginx will listen on on. Cloud Run expects applications to listen on PORT 8080.
 # However, Nginx by default listens on port 80. The nginx.conf will map this.
 EXPOSE 8080
 
 # Command to run Nginx.
 # 'daemon off;' keeps Nginx running in the foreground, which is necessary for Docker containers.
 CMD ["nginx", "-g", "daemon off;"]
-```
-
-**`nginx.conf` (remains the same):**
-```nginx
-server {
-    listen 8080; # Cloud Run expects applications to listen on port 8080
-    root /usr/share/nginx/html;
-    index index.html index.htm;
-
-    # Try serving static files first. If not found, fall back to index.html.
-    # This is essential for client-side routing (e.g., React Router) so that
-    # refreshing or direct access to a deep link routes back to your app.
-    location / {
-        try_files $uri $uri/ /index.html;
-    }
-
-    # Optional: Cache static assets (images, CSS, JS) for better performance.
-    # Adjust max-age as per your caching strategy.
-    location ~* \.(js|css|png|jpg|jpeg|gif|ico|woff|woff2|ttf|svg|eot)$ {
-        expires 30d;
-        add_header Cache-Control "public, no-transform";
-    }
-}

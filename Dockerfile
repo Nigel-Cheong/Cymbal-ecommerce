@@ -34,7 +34,7 @@ COPY --from=builder /app/build /usr/share/nginx/html
 
 # Expose the port Nginx will listen on on. Cloud Run expects applications to listen on PORT 8080.
 # However, Nginx by default listens on port 80. The nginx.conf will map this.
-EXPOSE 8080
+EXPOSE 80
 
 # Command to run Nginx.
 # 'daemon off;' keeps Nginx running in the foreground, which is necessary for Docker containers.

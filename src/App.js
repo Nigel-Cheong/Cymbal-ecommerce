@@ -28,13 +28,14 @@ function App() {
 
   return (
     <div className="min-h-screen bg-gray-100 font-sans antialiased">
-      <Header />
-      <main>
-        <ProductList products={PRODUCTS} />
-      </main>
-      <Footer />
+      <ShopContextProvider>
+        <Header />
+        <main>
+          <ProductList products={PRODUCTS} />
+        </main>
+        <Footer />
+      </ShopContextProvider>
     </div>
   );
 }
-
 export default App;

@@ -5,7 +5,7 @@ import { Header } from "./components/header";
 import { Footer } from "./components/footer";
 import { ProductList } from "./components/productList";
 import { products } from "./products";
-import CartPage from "./pages/cart/cartPage";
+import { CartPage } from "./pages/cart/cartPage";
 
 function App() {
   const [cartItems, setCartItems] = useState([]);
@@ -81,5 +81,4 @@ function App() {
     </div>
   );
 }
-
 export default App;

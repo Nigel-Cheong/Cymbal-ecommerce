@@ -1,25 +1,14 @@
-// src/pages/CartPage.jsx
-import React from 'react';
+import { EmptyCart } from "./emptyCart";
+import { CartItem } from "./cartItem";
+import { CartSummary } from "./cartSummary";
 
-const CartPage = ({ cartItems, onUpdateQuantity, onRemoveItem, onContinueShopping }) => {
-  const calculateTotal = () => {
-    return cartItems.reduce((total, item) => total + item.price * item.quantity, 0);
-  };
-
+export const CartPage = ({ cartItems, onUpdateQuantity, onRemoveItem, onContinueShopping }) => {
   return (
-    <div className="container mx-auto py-12 px-4 min-h-[calc(100vh-180px)]"> {/* Adjusted min-height for better spacing */}
+    <div className="container mx-auto py-12 px-4 min-h-[calc(100vh-180px)]">
       <h2 className="text-4xl font-extrabold text-center text-gray-900 mb-10 tracking-tight">Your Shopping Cart</h2>
 
       {cartItems.length === 0 ? (
-        <div className="text-center text-gray-600 text-lg">
-          <p className="mb-4">Your cart is empty.</p>
-          <button
-            onClick={onContinueShopping}
-            className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-full transition duration-300 ease-in-out shadow-lg hover:shadow-xl"
-          >
-            Continue Shopping
-          </button>
-        </div>
+        <EmptyCart onContinueShopping={onContinueShopping} />
       ) : (
         <div className="bg-white rounded-lg shadow-xl p-6 lg:p-8">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6 font-semibold text-gray-700 border-b pb-2">
@@ -32,72 +21,21 @@ const CartPage = ({ cartItems, onUpdateQuantity, onRemoveItem, onContinueShoppin
           </div>
 
           {cartItems.map((item) => (
-            <div key={item.id} className="grid grid-cols-1 md:grid-cols-3 gap-6 items-center py-4 border-b last:border-b-0">
-              <div className="flex items-center col-span-2">
-                <img
-                  src={item.productImage}
-                  alt={item.name}
-                  className="w-20 h-20 object-cover rounded-lg mr-4"
-                  onError={(e) => { e.target.onerror = null; e.target.src = `https://placehold.co/200x200/CCCCCC/333333?text=Image+Error`; }}
-                />
-                <div>
-                  <h3 className="text-lg font-semibold text-gray-800">{item.name}</h3>
-                  <p className="text-gray-600 text-sm">${item.price.toFixed(2)} each</p>
-                </div>
-              </div>
-              <div className="flex justify-between items-center text-gray-800">
-                <div className="flex items-center w-1/3 justify-center">
-                  <button
-                    onClick={() => onUpdateQuantity(item.id, item.quantity - 1)}
-                    disabled={item.quantity <= 1}
-                    className="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-1 px-3 rounded-full disabled:opacity-50"
-                  >
-                    -
-                  </button>
-                  <span className="mx-2 font-bold">{item.quantity}</span>
-                  <button
-                    onClick={() => onUpdateQuantity(item.id, item.quantity + 1)}
-                    className="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-1 px-3 rounded-full"
-                  >
-                    +
-                  </button>
-                </div>
-                <span className="text-right font-bold w-1/3">${(item.price * item.quantity).toFixed(2)}</span>
-                <div className="w-1/3 flex justify-end">
-                    <button
-                        onClick={() => onRemoveItem(item.id)}
-                        className="text-red-500 hover:text-red-700 transition duration-300"
-                    >
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                        </svg>
-                    </button>
-                </div>
-              </div>
-            </div>
+            <CartItem
+              key={item.id}
+              item={item}
+              onUpdateQuantity={onUpdateQuantity}
+              onRemoveItem={onRemoveItem}
+            />
           ))}
 
-          <div className="flex justify-end items-center mt-8 pt-4 border-t border-gray-200">
-            <span className="text-3xl font-bold text-gray-900 mr-6">Total: ${calculateTotal().toFixed(2)}</span>
-            <button
-              onClick={() => alert('Proceed to Checkout (functionality to be implemented!)')}
-              className="bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-6 rounded-full transition duration-300 ease-in-out shadow-lg hover:shadow-xl"
-            >
-              Proceed to Checkout
-            </button>
-          </div>
-          <div className="flex justify-center mt-6">
-            <button
-              onClick={onContinueShopping}
-              className="text-blue-600 hover:text-blue-800 font-semibold py-2 px-4 transition duration-300 ease-in-out"
-            >
-              ← Continue Shopping
-            </button>
-          </div>
+          <CartSummary
+            cartItems={cartItems}
+            onContinueShopping={onContinueShopping}
+          />
         </div>
       )}
     </div>
   );
 };
 
-export default CartPage;

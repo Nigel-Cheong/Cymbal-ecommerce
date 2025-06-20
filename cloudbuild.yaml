@@ -1,0 +1,57 @@
+# cloudbuild.yaml
+steps:
+- name: 'gcr.io/cloud-builders/docker'
+  args: [
+    'build',
+    '-t', 'gcr.io/$PROJECT_ID/cymbal-boutique:$COMMIT_SHA', # Tag the Docker image
+    # Pass build arguments from Secret Manager to the Dockerfile
+    '--build-arg', 'REACT_APP_APP_ID=${_REACT_APP_APP_ID}',
+    # '--build-arg', 'REACT_APP_INITIAL_AUTH_TOKEN=${_REACT_APP_INITIAL_AUTH_TOKEN}',
+    '--build-arg', 'REACT_APP_FIREBASE_API_KEY=${_REACT_APP_FIREBASE_API_KEY}',
+    '--build-arg', 'REACT_APP_FIREBASE_AUTH_DOMAIN=${_REACT_APP_FIREBASE_AUTH_DOMAIN}',
+    '--build-arg', 'REACT_APP_FIREBASE_PROJECT_ID=${_REACT_APP_FIREBASE_PROJECT_ID}',
+    '--build-arg', 'REACT_APP_FIREBASE_STORAGE_BUCKET=${_REACT_APP_FIREBASE_STORAGE_BUCKET}',
+    '--build-arg', 'REACT_APP_FIREBASE_MESSAGING_SENDER_ID=${_REACT_APP_FIREBASE_MESSAGING_SENDER_ID}',
+    '--build-arg', 'REACT_APP_FIREBASE_APP_ID=${_REACT_APP_FIREBASE_APP_ID}',
+    # '--build-arg', 'REACT_APP_FIREBASE_MEASUREMENT_ID=${_REACT_APP_FIREBASE_MEASUREMENT_ID}', # Uncomment if using Analytics
+    '.' # Build context is the current directory
+  ]
+  # Specify which secret environment variables should be available in this step
+  # These names should match the 'env' field in the 'availableSecrets' section below.
+  secretEnv: [
+    '_REACT_APP_APP_ID',
+    # '_REACT_APP_INITIAL_AUTH_TOKEN',
+    '_REACT_APP_FIREBASE_API_KEY',
+    '_REACT_APP_FIREBASE_AUTH_DOMAIN',
+    '_REACT_APP_FIREBASE_PROJECT_ID',
+    '_REACT_APP_FIREBASE_STORAGE_BUCKET',
+    '_REACT_APP_FIREBASE_MESSAGING_SENDER_ID',
+    '_REACT_APP_FIREBASE_APP_ID'
+    # '_REACT_APP_FIREBASE_MEASUREMENT_ID' # Uncomment if using Analytics
+  ]
+# Images to push to Google Container Registry (GCR)
+images:
+- 'gcr.io/$PROJECT_ID/cymbal-boutique:$COMMIT_SHA'
+
+# Define available secrets from Secret Manager
+# Cloud Build will fetch these secrets before starting the build step
+availableSecrets:
+  secretManager:
+  - versionName: projects/$PROJECT_NUMBER/secrets/REACT_APP_APP_ID/versions/latest
+    env: '_REACT_APP_APP_ID' # Local environment variable name for this step
+  # - versionName: projects/$PROJECT_NUMBER/secrets/REACT_APP_INITIAL_AUTH_TOKEN/versions/latest
+  #   env: '_REACT_APP_INITIAL_AUTH_TOKEN'
+  - versionName: projects/$PROJECT_NUMBER/secrets/REACT_APP_FIREBASE_API_KEY/versions/latest
+    env: '_REACT_APP_FIREBASE_API_KEY'
+  - versionName: projects/$PROJECT_NUMBER/secrets/REACT_APP_FIREBASE_AUTH_DOMAIN/versions/latest
+    env: '_REACT_APP_FIREBASE_AUTH_DOMAIN'
+  - versionName: projects/$PROJECT_NUMBER/secrets/REACT_APP_FIREBASE_PROJECT_ID/versions/latest
+    env: '_REACT_APP_FIREBASE_PROJECT_ID'
+  - versionName: projects/$PROJECT_NUMBER/secrets/REACT_APP_FIREBASE_STORAGE_BUCKET/versions/latest
+    env: '_REACT_APP_FIREBASE_STORAGE_BUCKET'
+  - versionName: projects/$PROJECT_NUMBER/secrets/REACT_APP_FIREBASE_MESSAGING_SENDER_ID/versions/latest
+    env: '_REACT_APP_FIREBASE_MESSAGING_SENDER_ID'
+  - versionName: projects/$PROJECT_NUMBER/secrets/REACT_APP_FIREBASE_APP_ID/versions/latest
+    env: '_REACT_APP_FIREBASE_APP_ID'
+  # - versionName: projects/$PROJECT_NUMBER/secrets/REACT_APP_FIREBASE_MEASUREMENT_ID/versions/latest # Uncomment if using Analytics
+  #   env: '_REACT_APP_FIREBASE_MEASUREMENT_ID'
